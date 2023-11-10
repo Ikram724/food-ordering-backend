@@ -1,11 +1,13 @@
 import express, { Router } from "express";
 import { AuthController } from "./auth.controller";
+import verifyToken from "./authmiddleware";
 
 const router: Router = express.Router();
 const authController = new AuthController();
 
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
+router.use(verifyToken);
 router.get("/restaurants", authController.getAllRestaurants);
 router.get("/restaurants/:id", authController.getResById);
 router.post("/restaurants/create", authController.createRestaurant);

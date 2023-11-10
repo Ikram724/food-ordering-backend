@@ -17,8 +17,11 @@ export class AuthController {
   async login(req: Request, res: Response) {
     const { username, password } = req.body;
     const user = await userService.findUserByUsername(username);
+    const expirationTime = 60 * 60;
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ id: user.id }, "secret_key");
+      const token = jwt.sign({ user: { id: user.id } }, "secret_key", {
+        expiresIn: expirationTime,
+      });
       res.json({ token });
     } else {
       res.status(401).json({ message: "Invalid username or password" });
