@@ -22,5 +22,5 @@ export class Restaurant {
   Food_items: string;
 
   @OneToMany(() => Food, (food) => food.Item_Name)
-  food: Food;
+  food: Food[];
 }

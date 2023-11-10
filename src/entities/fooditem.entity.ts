@@ -3,7 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  OneToMany,
+  JoinColumn,
 } from "typeorm";
 import { Restaurant } from "./restaurant.entity";
 
@@ -19,5 +19,6 @@ export class Food {
   item_Price: string;
 
   @ManyToOne(() => Restaurant, (res) => res.Food_items)
+  @JoinColumn()
   res: Restaurant;
 }
