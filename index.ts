@@ -13,9 +13,16 @@ import { Connection, createConnection } from "typeorm";
 import { Restaurant } from "./src/entities/restaurant.entity";
 import { Food } from "./src/entities/fooditem.entity";
 import { Admin } from "./src/entities/auth.entity";
+import { EventEmitter } from "events";
 
+EventEmitter.defaultMaxListeners = 20;
 // For env File
 dotenv.config();
+const app: Application = express();
+const port = process.env.PORT || 5000;
+app.use(express.json());
+app.use("/auth", router);
+app.use("/users", router1);
 
 async function initializeDatabases(): Promise<Connection> {
   const connection = await createConnection({
@@ -51,14 +58,9 @@ async function initializeDatabases(): Promise<Connection> {
 //   });
 // })
 // .catch((err) => console.log("error connecting database"));
-initializeDatabases().then((connection) => {
+initializeDatabases().then(() => {
   console.log("connected");
   app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
   });
 });
-const app: Application = express();
-const port = process.env.PORT || 5000;
-app.use(express.json());
-app.use("/auth", router);
-app.use("/users", router1);

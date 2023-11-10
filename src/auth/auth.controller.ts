@@ -30,7 +30,17 @@ export class AuthController {
   }
 
   async getResById(req: Request, res: Response) {
-    res.send(`restaurant by id ${req.params.id}`);
+    try {
+      const restaurant = await getRepository(Restaurant).findOne(req.params.id);
+      if (restaurant) {
+        res.status(200).json(restaurant);
+      } else {
+        res.status(404).json({ message: "Restaurant not found" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
   async createRestaurant(req: Request, res: Response) {
     const restaurantRepository = getRepository(Restaurant);
@@ -39,9 +49,41 @@ export class AuthController {
     res.status(201).json(newRestaurant);
   }
   async updateRestaurant(req: Request, res: Response) {
-    res.send(`restaurant updated of id: ${req.params.id}`);
+    try {
+      const restaurantRepository = getRepository(Restaurant);
+      const existingRestaurant = await restaurantRepository.findOne(
+        req.params.id
+      );
+
+      if (!existingRestaurant) {
+        res.status(404).json({ message: "Restaurant not found" });
+        return;
+      }
+
+      const updatedRestaurant = restaurantRepository.merge(
+        existingRestaurant,
+        req.body
+      );
+      await restaurantRepository.save(updatedRestaurant);
+      res.status(200).json(updatedRestaurant);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
   async deleteRestaurant(req: Request, res: Response) {
-    res.send(`restaurant deleted of id: ${req.params.id}`);
+    try {
+      const restaurantRepository = getRepository(Restaurant);
+      const deleteResult = await restaurantRepository.delete(req.params.id);
+
+      if (deleteResult.affected !== undefined && deleteResult.affected) {
+        res.status(204).end().send(`restaurant deleted`);
+      } else {
+        res.status(404).json({ message: "Restaurant not found" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 }

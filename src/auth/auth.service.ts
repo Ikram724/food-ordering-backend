@@ -1,22 +1,22 @@
 import bcrypt from "bcrypt";
-import { IUser } from "./dto/user.interface";
 import { Admin } from "../entities/auth.entity";
+import { getRepository } from "typeorm";
 
 export class UserService {
-  private users: Admin[] = [];
-
   async createUser(username: string, password: string): Promise<Admin> {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user: Admin = {
+
+    const user = await getRepository(Admin).create({
       username,
       password: hashedPassword,
-      id: "uuid",
-    };
-    this.users.push(user);
-    return user;
+    });
+
+    const saved = await getRepository(Admin).save(user);
+    return saved;
   }
 
   async findUserByUsername(username: string): Promise<Admin | null> {
-    return this.users.find((user) => user.username === username) || null;
+    const user = await getRepository(Admin).findOne({ username });
+    return user || null;
   }
 }
