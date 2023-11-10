@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
+import { Food } from "./fooditem.entity";
 
 @Entity()
 export class Restaurant {
@@ -13,4 +20,7 @@ export class Restaurant {
 
   @Column()
   Food_items: string;
+
+  @OneToMany(() => Food, (food) => food.Item_Name)
+  food: Food;
 }

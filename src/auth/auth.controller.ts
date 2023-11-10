@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { UserService } from "./auth.service";
 import bcrypt from "bcrypt";
-import { AppDataSource } from "../..";
 import { Restaurant } from "../entities/restaurant.entity";
 import { getRepository } from "typeorm";
 
