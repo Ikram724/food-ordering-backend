@@ -11,7 +11,7 @@ import { DataSource } from "typeorm";
 import "reflect-metadata";
 import router1 from "./src/users/userRoutes";
 
-//For env File
+// For env File
 dotenv.config();
 
 export const AppDataSource = new DataSource({
