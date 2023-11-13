@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Food } from "./fooditem.entity";
+import { Admin } from "./auth.entity";
 
 @Entity()
 export class Restaurant {
@@ -23,4 +24,7 @@ export class Restaurant {
 
   @OneToMany(() => Food, (food) => food.Item_Name)
   food: Food[];
+
+  @ManyToOne((_type) => Admin, (admin) => admin.restaurant, { eager: false })
+  admin: Admin;
 }

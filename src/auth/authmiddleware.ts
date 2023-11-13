@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 interface AuthenticatedRequest extends Request {
-  user?: any; // Adjust the type based on your decoded token structure
+  admin?: any; // Adjust the type based on your decoded token structure
 }
 
 const verifyToken = (
@@ -10,21 +10,23 @@ const verifyToken = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization");
+  let token;
+  let authHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized: Token is missing" });
-  }
-
-  try {
-    // Verify the token
-    const decoded = jwt.verify(token, "secret_key");
-
-    // Attach the decoded user information to the request object
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Unauthorized: Invalid token" });
+  if (authHeader && authHeader.startsWith("Bearer")) {
+    token = authHeader.split(" ")[1];
+    jwt.verify(token, "secret_key", (err, decoded) => {
+      if (err) {
+        res.status(401);
+        throw new Error("User not authorized");
+      }
+      req.admin = decoded;
+      next();
+    });
+    if (!token) {
+      res.status(401);
+      throw new Error("User is not authorized or token is missing");
+    }
   }
 };
 
