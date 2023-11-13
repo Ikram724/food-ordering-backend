@@ -19,6 +19,5 @@ export class Admin {
   password: string;
 
   @OneToMany((_type) => Restaurant, (res) => res.admin, { eager: true })
-  @JoinColumn()
   restaurant: Restaurant[];
 }

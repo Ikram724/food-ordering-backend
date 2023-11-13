@@ -11,7 +11,7 @@ router.use(verifyToken);
 router.get("/restaurants", authController.getAllRestaurants);
 router.get("/restaurants/:id", authController.getResById);
 router.post("/restaurants/create", authController.createRestaurant);
-// router.put("/restaurants/update/:id", authController.updateRestaurant);
+router.put("/restaurants/update/:id", authController.updateRestaurant);
 router.delete("/restaurants/delete/:id", authController.deleteRestaurant);
 
 export default router;

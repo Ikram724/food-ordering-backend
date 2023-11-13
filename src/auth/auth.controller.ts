@@ -76,15 +76,12 @@ export class AuthController {
   async updateRestaurant(req: Request, res: Response) {
     const resId = req.params.id;
     const repo = AppDataSource.getRepository(Restaurant);
-    const existingRestaurant = await repo.findOneById(resId);
+    const existingRestaurant = await repo.findBy({ id: resId });
 
     if (!existingRestaurant) {
       throw new Error("Restaurant not found");
     }
-    if (existingRestaurant.admin.toString() !== resId) {
-      res.status(403);
-      throw new Error("you dont have permissions to access other users data");
-    }
+
     const updatedContact = await repo.update(req.params.id, req.body);
     res.status(200).json(updatedContact);
   }
