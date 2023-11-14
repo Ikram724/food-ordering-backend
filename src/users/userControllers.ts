@@ -19,12 +19,18 @@ export class UserController {
     res.json(items);
   }
   async orderFooditem(req: Request, res: Response) {
-    const { resName, Loc, Item } = req.body;
-    if (!resName && !Loc && !Item) {
+    const { restaurant_name, location, food_items } = req.body;
+    if (!restaurant_name && !location && !food_items) {
       res.json("all the fields are mandatory");
     }
     const repo = AppDataSource.getRepository(Order);
-    await repo.save(req.body);
+    const saved = await repo.save(req.body);
+    res.json(saved);
     res.send("your order has been taken !you will be dilevered soon");
   }
+  // async allOrders(req: Request, res: Response) {
+  //   const repo = AppDataSource.getRepository(Order);
+  //   const order = await repo.find();
+  //   res.json(order);
+  // }
 }

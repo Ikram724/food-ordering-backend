@@ -12,11 +12,11 @@ export class Order {
   id: string;
 
   @Column()
-  Restaurant_Name: string;
+  restaurant_name: string;
 
   @Column()
-  Location: string;
+  location: string;
 
   @Column()
-  Food_items: string;
+  food_items: string;
 }

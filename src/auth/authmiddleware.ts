@@ -2,11 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { Admin } from "../entities/auth.entity";
 import dotenv from "dotenv";
+import { AppDataSource } from "../..";
 
 dotenv.config();
 
 interface AuthenticatedRequest extends Request {
-  user?: any; // Adjust the type based on your decoded token structure
+  user?: any;
 }
 
 const verifyToken = (
@@ -19,12 +20,15 @@ const verifyToken = (
 
   if (authHeader && authHeader.startsWith("Bearer")) {
     token = authHeader.split(" ")[1];
-    jwt.verify(token, "secret_key", (err, decoded) => {
+    jwt.verify(token, "secret_key", (err, decoded: any) => {
       if (err) {
         res.status(401);
         throw new Error("User not authorized");
       }
-      req.user = decoded;
+      console.log("admin", decoded?.user);
+      const userRepo = AppDataSource.getRepository(Admin);
+      const user = userRepo.findOne({ where: { id: decoded?.user?.id } });
+      req.user = user;
       next();
     });
     if (!token) {

@@ -25,6 +25,6 @@ export class Restaurant {
   @OneToMany(() => Food, (food) => food.Item_Name)
   food: Food[];
 
-  @ManyToOne((_type) => Admin, (admin) => admin.restaurant, { eager: false })
+  @ManyToOne((_type) => Admin, (admin) => admin.restaurant)
   admin: Admin;
 }

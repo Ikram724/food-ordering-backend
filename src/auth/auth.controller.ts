@@ -6,6 +6,7 @@ import { Restaurant } from "../entities/restaurant.entity";
 import { getRepository } from "typeorm";
 import { Admin } from "../entities/auth.entity";
 import { AppDataSource } from "../..";
+import { Order } from "../entities/order.entity";
 
 interface AuthenticatedRequest extends Request {
   user?: Admin; // Adjust the type based on your decoded token structure
@@ -41,7 +42,10 @@ export class AuthController {
   }
   async getAllRestaurants(req: AuthenticatedRequest, res: Response) {
     const repo = AppDataSource.getRepository(Restaurant);
-    const allRestaurants = await repo.find({ where: { admin: req.user } });
+    console.log(req.user);
+    const allRestaurants = await repo.find({
+      where: { admin: { id: req.user?.id } },
+    });
     res.json(allRestaurants);
   }
 
@@ -70,7 +74,6 @@ export class AuthController {
     }
 
     const repo = AppDataSource.getRepository(Restaurant);
-    // const repo1 = AppDataSource.getRepository(Admin);
 
     const newRestaurant = repo.create({
       Restaurant_Name,
@@ -111,5 +114,10 @@ export class AuthController {
       console.error(error);
       res.status(500).json({ message: "Internal Server Error" });
     }
+  }
+  async allOrders(req: Request, res: Response) {
+    const repo = AppDataSource.getRepository(Order);
+    const order = await repo.find();
+    res.json(order);
   }
 }
