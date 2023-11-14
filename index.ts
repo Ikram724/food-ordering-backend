@@ -16,26 +16,6 @@ app.use(express.json());
 app.use("/auth", router);
 app.use("/users", router1);
 
-// export const AppDataSource = new DataSource({
-//   type: "mysql",
-//   host: "localhost",
-//   port: 3306,
-//   username: "root",
-//   password: "Molajat112",
-//   database: "task_management",
-//   entities: ["src/entities/*{.ts}"],
-//   synchronize: true,
-//   logging: true,
-// })
-//   .initialize()
-//   .then(() => {
-//     console.log(`connected`);
-//     app.listen(port, () => {
-//       console.log(`Server is running at http://localhost:${port}`);
-//     });
-//   })
-//   .catch((err) => console.log("error connecting database"));
-
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: "localhost",
@@ -43,7 +23,7 @@ export const AppDataSource = new DataSource({
   username: "root",
   password: "Molajat112",
   database: "task_management",
-  entities: [Restaurant, Food, Admin, Order],
+  entities: [Admin, Restaurant, Food, Order],
   synchronize: true,
   logging: true,
 });

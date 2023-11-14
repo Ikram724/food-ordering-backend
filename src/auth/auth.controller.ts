@@ -8,7 +8,7 @@ import { Admin } from "../entities/auth.entity";
 import { AppDataSource } from "../..";
 
 interface AuthenticatedRequest extends Request {
-  admin?: any; // Adjust the type based on your decoded token structure
+  user?: Admin; // Adjust the type based on your decoded token structure
 }
 
 const userService = new UserService();
@@ -25,25 +25,33 @@ export class AuthController {
     const user = await userService.findUserByUsername(username);
     const expirationTime = 60 * 60;
     if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ user: { id: user.id } }, "secret_key", {
-        expiresIn: expirationTime,
-      });
+      const token = jwt.sign(
+        {
+          user: { username: user.username, id: user.id },
+        },
+        "secret_key",
+        {
+          expiresIn: expirationTime,
+        }
+      );
       res.json({ token });
     } else {
       res.status(401).json({ message: "Invalid username or password" });
     }
   }
-  async getAllRestaurants(req: Request, res: Response) {
+  async getAllRestaurants(req: AuthenticatedRequest, res: Response) {
     const repo = AppDataSource.getRepository(Restaurant);
-    const allRestaurants = await repo.find();
+    const allRestaurants = await repo.find({ where: { admin: req.user } });
     res.json(allRestaurants);
   }
 
-  async getResById(req: Request, res: Response) {
+  async getResById(req: AuthenticatedRequest, res: Response) {
     try {
-      const resId = req.params.id;
+      const resid = req.params.id;
       const repo = AppDataSource.getRepository(Restaurant);
-      const resById = await repo.findBy({ id: resId });
+      const resById = await repo.findOne({
+        where: { id: resid, admin: req.user },
+      });
       if (resById) {
         res.json(resById);
       } else {
@@ -62,21 +70,25 @@ export class AuthController {
     }
 
     const repo = AppDataSource.getRepository(Restaurant);
+    // const repo1 = AppDataSource.getRepository(Admin);
+
     const newRestaurant = repo.create({
       Restaurant_Name,
       Location,
       Food_items,
-      admin: req.admin.id,
+      admin: req.user,
     });
 
     await repo.save(newRestaurant);
     res.status(201).json(newRestaurant);
     res.json(newRestaurant);
   }
-  async updateRestaurant(req: Request, res: Response) {
+  async updateRestaurant(req: AuthenticatedRequest, res: Response) {
     const resId = req.params.id;
     const repo = AppDataSource.getRepository(Restaurant);
-    const existingRestaurant = await repo.findBy({ id: resId });
+    const existingRestaurant = await repo.findOne({
+      where: { id: resId, admin: req.user },
+    });
 
     if (!existingRestaurant) {
       throw new Error("Restaurant not found");
@@ -85,7 +97,7 @@ export class AuthController {
     const updatedContact = await repo.update(req.params.id, req.body);
     res.status(200).json(updatedContact);
   }
-  async deleteRestaurant(req: Request, res: Response) {
+  async deleteRestaurant(req: AuthenticatedRequest, res: Response) {
     try {
       const repo = AppDataSource.getRepository(Restaurant);
       const deleteResult = await repo.delete(req.params.id);

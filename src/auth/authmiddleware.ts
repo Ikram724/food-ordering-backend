@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { Admin } from "../entities/auth.entity";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface AuthenticatedRequest extends Request {
-  admin?: any; // Adjust the type based on your decoded token structure
+  user?: any; // Adjust the type based on your decoded token structure
 }
 
 const verifyToken = (
@@ -20,7 +24,7 @@ const verifyToken = (
         res.status(401);
         throw new Error("User not authorized");
       }
-      req.admin = decoded;
+      req.user = decoded;
       next();
     });
     if (!token) {
