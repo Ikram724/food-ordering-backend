@@ -9,7 +9,7 @@ import { AppDataSource } from "../..";
 import { Order } from "../entities/order.entity";
 
 interface AuthenticatedRequest extends Request {
-  user?: Admin; // Adjust the type based on your decoded token structure
+  user?: any; // Adjust the type based on your decoded token structure
 }
 
 const userService = new UserService();
@@ -79,7 +79,6 @@ export class AuthController {
       Restaurant_Name,
       Location,
       Food_items,
-      admin: req.user,
     });
 
     await repo.save(newRestaurant);
