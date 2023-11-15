@@ -9,7 +9,7 @@ import { AppDataSource } from "../..";
 import { Order } from "../entities/order.entity";
 
 interface AuthenticatedRequest extends Request {
-  user?: any; // Adjust the type based on your decoded token structure
+  user?: Admin; // Adjust the type based on your decoded token structure
 }
 
 const userService = new UserService();
@@ -83,7 +83,6 @@ export class AuthController {
 
     await repo.save(newRestaurant);
     res.status(201).json(newRestaurant);
-    res.json(newRestaurant);
   }
   async updateRestaurant(req: AuthenticatedRequest, res: Response) {
     const resId = req.params.id;
@@ -105,7 +104,7 @@ export class AuthController {
       const deleteResult = await repo.delete(req.params.id);
 
       if (deleteResult.affected !== undefined && deleteResult.affected) {
-        res.status(204).end().send(`restaurant deleted`);
+        res.status(204).json({ message: `restaurant deleted` });
       } else {
         res.status(404).json({ message: "Restaurant not found" });
       }
